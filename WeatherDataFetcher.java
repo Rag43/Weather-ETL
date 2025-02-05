@@ -60,6 +60,9 @@ public class WeatherDataFetcher {
             JSONObject wind = jsonObject.getJSONObject("wind");
             double windSpeed = wind.getDouble("speed");
 
+            //Save to database
+            DatabaseManager.insertWeatherData(cityName, temperature, feelsLike, humidity, weatherDescription, windSpeed);
+
             //Format output
             return "Weather in " + cityName + ":\n" +
                     "Temperature: " + temperature + "°C (Feels like " + feelsLike + "°C)\n" +
