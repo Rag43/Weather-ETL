@@ -40,5 +40,30 @@ TESTS PERFORMED FEB 5th:
 ran DatabaseManager.java, connects to SQLite database and creates table
 ran WeatherDataFetcher.java, fetches, parses, and stores parsed data in weather_data.db
 manually checked database using DB Browser for SQLite
+
+need to fetch & display past data... DataManager modified feb 6th:
+	retrieveWeatherData() method implemented feb 6th:
+		ResultSet object resultSet holds the executed statement based on sql
+		loop through the rows, collecting and printing each value
+		*note: because DriverManager.getConnection() throws a SQLException,
+		we need to use try catch always
+
+Currently retrieveWeatherData() fetches all stored weather records... added functionality for
+user input to filter by city feb 6th:
+updated DatabaseManager feb 6th:
+	implemented retrieveWeatherDataByCity() feb 6th:
+		similar sql statement but set WHERE city to parameter city using
+		PreparedStatement
+		loop through rows and print data
+		No data found case implemented using boolean dataFound, set always to true if
+		resultSet.next()
+		called in main method with Scanner input
+
+implemented similar user input for fetching data, modified WeatherDataFetcher feb 6th:
+	in main method, set String city to Scanner input
+		
+		
+	
+
 		
 	
