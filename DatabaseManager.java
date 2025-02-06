@@ -1,4 +1,5 @@
-import java.sql.*;
+import java.sql.*; // Connection, DriverManager, SQLException, Statement, ResultSet
+import java.util.Scanner;
 
 public class DatabaseManager {
     private static final String DATABASE_URL = "jdbc:sqlite:weather_data.db";
@@ -62,8 +63,90 @@ public class DatabaseManager {
         }
     }
 
+    public static void retrieveWeatherData() {
+        // SQL statement to retrieve last 10 records from weather
+        String sql = "SELECT * FROM weather ORDER BY timestamp DESC LIMIT 10";
+
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) { // resultSet holds executed query
+            System.out.println("\n--- Weather History ---");
+            while (resultSet.next()) { // loop through each row
+                // collect all values for each row
+                int id = resultSet.getInt("id");
+                String city = resultSet.getString("city");
+                double temperature = resultSet.getDouble("temperature");
+                double feelsLike = resultSet.getDouble("feels_like");
+                int humidity = resultSet.getInt("humidity");
+                String conditions = resultSet.getString("conditions");
+                double windSpeed = resultSet.getDouble("wind_speed");
+                String timestamp = resultSet.getString("timestamp");
+
+                // format & print values for each row
+                System.out.println("ID: " + id);
+                System.out.println("City: " + city);
+                System.out.println("Temperature: " + temperature + "°C (Feels like " + feelsLike + "°C)");
+                System.out.println("Humidity: " + humidity + "%");
+                System.out.println("Conditions: " + conditions);
+                System.out.println("Wind Speed: " + windSpeed + " m/s");
+                System.out.println("Timestamp: " + timestamp);
+                System.out.println("------------------------");
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println("Error retrieving data: " + e.getMessage());
+
+        }
+    }
+
+    public static void retrieveWeatherDataByCity(String city) {
+        String sql = "SELECT * FROM weather WHERE city = ? ORDER BY timestamp DESC LIMIT 5";
+
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, city); // Replace ? with city parameter
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            System.out.println("\n--- Weather History for " + city + " ---");
+            boolean dataFound = false;
+
+            while (resultSet.next()) { // Loop through the rows
+                dataFound = true;
+                // Get, format, and print values from row
+                System.out.println("Temperature: " + resultSet.getDouble("temperature")
+                        + "°C (Feels like " + resultSet.getDouble("feels_like") +
+                        "°C)");
+                System.out.println("Humidity: " + resultSet.getInt("humidity") + "%");
+                System.out.println("Conditions: " + resultSet.getString("conditions"));
+                System.out.println("Wind Speed: " + resultSet.getDouble("wind_speed") +
+                        " m/s");
+                System.out.println("Timestamp: " + resultSet.getString("timestamp"));
+                System.out.println("------------------------");
+
+            }
+
+            if (!dataFound) {
+                System.out.println("No weather data found for " + city);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error retrieving data: " + e.getMessage());
+
+        }
+
+
+    }
+
     public static void main(String[] args) {
         createDatabase();
         createTable();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter city name to retrieve weather records: ");
+        String city = scanner.nextLine();
+        retrieveWeatherDataByCity(city);
+
     }
 }

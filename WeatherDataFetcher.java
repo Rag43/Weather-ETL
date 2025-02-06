@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Scanner;
 
 public class WeatherDataFetcher {
     private static final String API_KEY = "1e2eca0b6ea529d8546d4d409944c025";
@@ -76,7 +77,9 @@ public class WeatherDataFetcher {
         }
     }
     public static void main(String[] args) {
-        String city = "Chicago"; //Make it any city
+        System.out.println("Enter city for weather data insertion: ");
+        Scanner scanner = new Scanner(System.in);
+        String city = scanner.nextLine(); // City based on scanner input
         String weatherData = getWeatherData(city);
         System.out.println(weatherData);
     }
